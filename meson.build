@@ -7,30 +7,23 @@ project('lk', 'c',
 liblk_args = ['-DBUILDING_LK']
 
 thread_dep = dependency('threads')
+srcdir = include_directories('include/lk')
 
-liblkchan = shared_library('lkchan', 'src/chan/chan.c',
+liblk = shared_library('lk', 
+  [
+    'src/lk.c',
+    'src/thread/thread.c',
+    'src/chan/chan.c',
+    ],
+  include_directories : srcdir,
   install : true,
   c_args : liblk_args,
   gnu_symbol_visibility : 'hidden',
   dependencies : thread_dep,
-)
-
-liblkthread = shared_library('lkthread', 'src/thread/thread.c',
-  install : true,
-  c_args : liblk_args,
-  gnu_symbol_visibility : 'hidden',
-  dependencies : thread_dep,
-)
-
-liblk = shared_library('lk', 'src/lk.c',
-  install : true,
-  c_args : liblk_args,
-  gnu_symbol_visibility : 'hidden',
-  dependencies : thread_dep,
-  link_with : [liblkchan, liblkthread],
 )
 
 test_exe = executable('test_lk', 'src/test.c',
+  include_directories : srcdir,
   link_with : liblk,
   dependencies : thread_dep,
 )
@@ -44,7 +37,11 @@ lk_dep = declare_dependency(
 
 # Make this library usable from the system's
 # package manager.
-install_headers('src/lk.h', subdir : 'lk')
+install_headers([
+  'include/lk/lk.h',
+  'include/lk/chan/chan.h',
+  'include/lk/thread/thread.h',
+])
 
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(

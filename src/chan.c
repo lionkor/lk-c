@@ -1,4 +1,4 @@
-#include <chan.h>
+#include "chan.h"
 
 #include <errno.h>
 #include <string.h>
