@@ -12,8 +12,8 @@ srcdir = include_directories('include/lk')
 liblk = shared_library('lk', 
   [
     'src/lk.c',
-    'src/thread/thread.c',
-    'src/chan/chan.c',
+    'src/thread.c',
+    'src/chan.c',
     ],
   include_directories : srcdir,
   install : true,
@@ -23,7 +23,13 @@ liblk = shared_library('lk',
 )
 
 test_exe = executable('test_lk', 'src/test.c',
-  include_directories : srcdir,
+  include_directories : [srcdir, include_directories('acutest/include')],
+  link_with : liblk,
+  dependencies : thread_dep,
+)
+
+sandbox_exe = executable('sandbox', 'src/sandbox.c',
+  include_directories : [srcdir, include_directories('acutest/include')],
   link_with : liblk,
   dependencies : thread_dep,
 )
@@ -39,8 +45,8 @@ lk_dep = declare_dependency(
 # package manager.
 install_headers([
   'include/lk/lk.h',
-  'include/lk/chan/chan.h',
-  'include/lk/thread/thread.h',
+  'include/lk/chan.h',
+  'include/lk/thread.h',
 ])
 
 pkg_mod = import('pkgconfig')

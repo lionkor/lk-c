@@ -1,6 +1,6 @@
 #pragma once
 
-#include "chan/chan.h"
+#include "chan.h"
 #include <stdlib.h>
 
 typedef void* (*LThreadFunction)(void*);
