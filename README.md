@@ -1,4 +1,4 @@
-# `liblk` C library
+# `lk` C library
 
 ## The quick version
 
