@@ -10,7 +10,7 @@ bool always_true = true;
 void* internal_start_thread(void* args_void_ptr) {
     LKInternalThreadArgs* args = args_void_ptr;
     // pushing to the status channel here signals the caller that the thread has started
-    lk_chan_push(&args->original_thread->_status_channel, &always_true, 0);
+    lk_chan_push(&args->original_thread->_status_channel, &always_true);
     // now we call the original function as usual
     return args->original_function(args->original_args);
 }

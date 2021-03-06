@@ -26,7 +26,6 @@
 
 typedef struct {
     void* data;
-    int type;
 } LKChanValue;
 
 typedef struct {
@@ -49,7 +48,7 @@ bool LK_PUBLIC lk_chan_init_with_size(LKChannel*, size_t size);
 void LK_PUBLIC lk_chan_destroy(LKChannel*);
 
 // pushes the data into the Channel if it has space, will block if it doesnt until it does
-void LK_PUBLIC lk_chan_push(LKChannel*, void* data, int type);
+void LK_PUBLIC lk_chan_push(LKChannel*, void* data);
 // blocks until a value arrives in the channel, gives it back once it has, and
 // removes it from the channel. will NEVER return NULL.
 LKChanValue LK_PUBLIC lk_chan_pop(LKChannel*);

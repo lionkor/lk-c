@@ -21,7 +21,6 @@ bool lk_chan_init_with_size(LKChannel* channel, size_t size) {
     channel->_size = size;
     for (size_t i = 0; i < size; ++i) {
         channel->_data[i].data = NULL;
-        channel->_data[i].type = -1;
     }
     channel->_read_ptr = 0;
     channel->_write_ptr = 0;
@@ -60,11 +59,10 @@ LKChanValue lk_chan_pop(LKChannel* channel) {
     return value;
 }
 
-void lk_chan_push(LKChannel* channel, void* data, int type) {
+void lk_chan_push(LKChannel* channel, void* data) {
     LK_ASSERT_NOT_NULL(channel);
     lk_compat_mutex_lock(&channel->_mutex);
     channel->_data[channel->_write_ptr].data = data;
-    channel->_data[channel->_write_ptr].type = type;
     channel->_write_ptr = (channel->_write_ptr + 1) % channel->_size;
     channel->_count += 1;
     atomic_fetch_add(&channel->_signals, 1);

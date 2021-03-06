@@ -21,8 +21,5 @@ typedef struct {
     LKChannel _status_channel;
 } LKThread;
 
-// will create a thread, start it, and block until the thread starts to execute.
-// this guarantees that after the call to this function the thread is running
-// and thus a few nasty issues with condition variables not waiting if there
-// are no other threads running are avoided.
+// creates a thread, starts it, returns when the thread is running.
 bool LK_PUBLIC lk_thread_create(LKThread*, LKThreadFunction fn, void* restrict args);
