@@ -24,18 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef CHAN_MALLOC
-#define CHAN_MALLOC malloc
-#endif // CHAN_MALLOC
-
-#ifndef CHAN_FREE
-#define CHAN_FREE free
-#endif // CHAN_FREE
-
-#ifndef CHAN_CALLOC
-#define CHAN_CALLOC calloc
-#endif // CHAN_CALLOC
-
 typedef struct {
     void* data;
     int type;

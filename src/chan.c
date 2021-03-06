@@ -13,9 +13,9 @@ bool lk_chan_init_with_size(LKChannel* channel, size_t size) {
         lk_log("size needs to be > 0");
         return false;
     }
-    channel->_data = CHAN_CALLOC(size, sizeof(LKChanValue));
+    channel->_data = lk_calloc(size, sizeof(LKChanValue));
     if (channel->_data == NULL) {
-        lk_log("CHAN_CALLOC failed: %s", strerror(errno));
+        lk_log_perror("lk_calloc");
         return false;
     }
     channel->_size = size;
