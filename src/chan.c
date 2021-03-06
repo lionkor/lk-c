@@ -97,7 +97,7 @@ void lk_chan_push(LKChannel* channel, void* data) {
     if (ret != 0) {
         lk_log_perror("mutex_lock");
     }
-    if (atomic_load(&channel->_free_signals) == 0) {
+    if (atomic_load(&channel->_free_signals) == 0 || channel->_count >= channel->_size) {
         do {
             ret = lk_compat_condition_wait(&channel->_free_cond_var, &channel->_mutex);
             if (ret != 0) {
