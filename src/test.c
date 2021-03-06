@@ -2,18 +2,18 @@
 #include <lk.h>
 
 void t_chan_init_destroy(void) {
-    Channel chan;
-    TEST_CHECK(chan_init(&chan) == true);
-    chan_destroy(&chan);
+    LKChannel chan;
+    TEST_CHECK(lk_chan_init(&chan) == true);
+    lk_chan_destroy(&chan);
 }
 
 void t_chan_init_destroy_bad(void) {
-    Channel chan;
-    TEST_CHECK(chan_init_with_size(&chan, 0) == false);
-    TEST_CHECK(chan_init_with_size(&chan, 1) == true);
-    chan_destroy(&chan);
+    LKChannel chan;
+    TEST_CHECK(lk_chan_init_with_size(&chan, 0) == false);
+    TEST_CHECK(lk_chan_init_with_size(&chan, 1) == true);
+    lk_chan_destroy(&chan);
     // should be valid
-    chan_destroy(NULL);
+    lk_chan_destroy(NULL);
 }
 
 TEST_LIST = {

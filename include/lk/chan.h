@@ -1,43 +1,6 @@
 #pragma once
-// WINDOWS
-#if defined _WIN32 || defined __CYGWIN__
 
-#error "mutex implementation is missing for this platform"
-
-#ifdef BUILDING_CHAN
-#define CHAN_PUBLIC __declspec(dllexport)
-#else
-#define CHAN_PUBLIC __declspec(dllimport)
-#endif
-
-// UNIX
-#else
-
-#include <pthread.h>
-#define CHAN_MUTEX_TYPE pthread_mutex_t
-#define CHAN_MUTEX_INIT(x) pthread_mutex_init(x, NULL)
-#define CHAN_MUTEX_DESTROY(x) pthread_mutex_destroy(x)
-#define CHAN_MUTEX_LOCK(x) pthread_mutex_lock(x)
-#define CHAN_MUTEX_UNLOCK(x) pthread_mutex_unlock(x)
-#define CHAN_MUTEX_TRY_LOCK(x) pthread_mutex_trylock(x)
-#define CHAN_CONDITION_TYPE pthread_cond_t
-#define CHAN_CONDITION_INIT(cond)                 \
-    do {                                          \
-        pthread_condattr_t attr;                  \
-        pthread_condattr_init(&attr);             \
-        pthread_condattr_setpshared(&attr, true); \
-        pthread_cond_init(cond, &attr);           \
-    } while (false)
-#define CHAN_CONDITION_DESTROY(cond) pthread_cond_destroy(cond)
-#define CHAN_CONDITION_WAIT(cond, mutex) pthread_cond_wait(cond, mutex)
-#define CHAN_CONDITION_SIGNAL(cond) pthread_cond_signal(cond)
-
-#ifdef BUILDING_CHAN
-#define CHAN_PUBLIC __attribute__((visibility("default")))
-#else
-#define CHAN_PUBLIC
-#endif
-#endif
+#include "common.h"
 
 /*
  * A Channel is a very limited, usually length 1, fully threadsafe queue.
@@ -76,34 +39,32 @@
 typedef struct {
     void* data;
     int type;
-} ChanValue;
+} LKChanValue;
 
 typedef struct {
-    ChanValue* _data;
+    LKChanValue* _data;
     size_t _size;
-    CHAN_MUTEX_TYPE _mutex;
-    CHAN_CONDITION_TYPE _cond_var;
-    atomic_bool _avail;
+    lk_compat_mutex_type _mutex;
+    lk_compat_condition_type _cond_var;
+    size_t _count;
     size_t _read_ptr;
     size_t _write_ptr;
-} Channel;
+    atomic_size_t _signals;
+} LKChannel;
 
 // initializes the channel with a queue size of 1; allocates
-bool CHAN_PUBLIC chan_init(Channel*);
+bool LK_PUBLIC lk_chan_init(LKChannel*);
 // initializes the channel with a queue size of `size`; allocates
 // requires size > 0
-bool CHAN_PUBLIC chan_init_with_size(Channel*, size_t size);
+bool LK_PUBLIC lk_chan_init_with_size(LKChannel*, size_t size);
 // destroys the channel and all its resources; deallocates
-void CHAN_PUBLIC chan_destroy(Channel*);
+void LK_PUBLIC lk_chan_destroy(LKChannel*);
 
-// pushes the data into the Channel if it has space, replaces old data it if it doesn't
-void CHAN_PUBLIC chan_push(Channel*, void* data, int type);
+// pushes the data into the Channel if it has space, will block if it doesnt until it does
+void LK_PUBLIC lk_chan_push(LKChannel*, void* data, int type);
 // blocks until a value arrives in the channel, gives it back once it has, and
 // removes it from the channel. will NEVER return NULL.
-ChanValue CHAN_PUBLIC chan_pop(Channel*);
-// non-blocking. pops the value into out_value if its available, returns false if its not
-// available
-bool chan_try_pop(Channel* channel, ChanValue* out_value);
+LKChanValue LK_PUBLIC lk_chan_pop(LKChannel*);
 
 // statics
 
@@ -111,4 +72,4 @@ bool chan_try_pop(Channel* channel, ChanValue* out_value);
 // when set to anything other than NULL, chan_* functions will log to that file.
 // it does at no point do any sanity checks on this file, so the caller must ensure that
 // the file is open and writable as long as any chan_* functions may be called.
-void CHAN_PUBLIC chan_set_log_file(FILE* file);
+void LK_PUBLIC lk_chan_set_log_file(FILE* file);
