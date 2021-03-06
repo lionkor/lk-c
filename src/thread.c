@@ -11,8 +11,6 @@ void* internal_start_thread(void* args_void_ptr) {
     LKInternalThreadArgs* args = args_void_ptr;
     // pushing to the status channel here signals the caller that the thread has started
     lk_chan_push(&args->original_thread->_status_channel, &always_true, 0);
-    lk_chan_push(&args->original_thread->_status_channel, &always_true, 0);
-    lk_chan_push(&args->original_thread->_status_channel, &always_true, 0);
     // now we call the original function as usual
     return args->original_function(args->original_args);
 }
@@ -32,11 +30,9 @@ bool lk_thread_create(LKThread* thread, LKThreadFunction fn, void* restrict args
         lk_log_perror("thread_create");
         return false;
     }
+    // blocks until the thread reports that it started
     LKChanValue val = lk_chan_pop(&thread->_status_channel);
-    LK_ASSERT(*((bool*)val.data) == true);
-    val = lk_chan_pop(&thread->_status_channel);
-    LK_ASSERT(*((bool*)val.data) == true);
-    val = lk_chan_pop(&thread->_status_channel);
+    // if this ever fails, chan is broken
     LK_ASSERT(*((bool*)val.data) == true);
     return true;
 }

@@ -39,7 +39,6 @@ LKChanValue chan_pop_internal(LKChannel* channel) {
     // and that data is available
     LK_ASSERT(channel->_count > 0);
     LKChanValue value = channel->_data[channel->_read_ptr];
-    lk_log("count: %lu", (unsigned long)channel->_count);
     channel->_read_ptr = (channel->_read_ptr + 1) % channel->_size;
     channel->_count -= 1;
     return value;
@@ -57,7 +56,6 @@ LKChanValue lk_chan_pop(LKChannel* channel) {
     }
     atomic_fetch_sub(&channel->_signals, 1);
     LKChanValue value = chan_pop_internal(channel);
-    lk_log("read %p", value.data);
     lk_compat_mutex_unlock(&channel->_mutex);
     return value;
 }
@@ -65,7 +63,6 @@ LKChanValue lk_chan_pop(LKChannel* channel) {
 void lk_chan_push(LKChannel* channel, void* data, int type) {
     LK_ASSERT_NOT_NULL(channel);
     lk_compat_mutex_lock(&channel->_mutex);
-    lk_log("wrote %p", data);
     channel->_data[channel->_write_ptr].data = data;
     channel->_data[channel->_write_ptr].type = type;
     channel->_write_ptr = (channel->_write_ptr + 1) % channel->_size;
