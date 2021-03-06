@@ -17,9 +17,12 @@
 typedef void* (*LKThreadFunction)(void*);
 
 typedef struct {
+    long id;
     lk_compat_thread_type _thread;
     LKChannel _status_channel;
 } LKThread;
 
 // creates a thread, starts it, returns when the thread is running.
+// after this call, LKThread.id will be populated with the thread's id as assigned
+// by the operating system
 bool LK_PUBLIC lk_thread_create(LKThread*, LKThreadFunction fn, void* restrict args);

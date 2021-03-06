@@ -14,9 +14,10 @@
 // UNIX - assume GNU + POSIX
 #else
 #define LK_POSIX
+    #define _GNU_SOURCE
     #include <pthread.h>
     #define lk_compat_mutex_type pthread_mutex_t
-    #define lk_compat_mutex_init(x) pthread_mutex_init(x, NULL)
+    #define lk_compat_mutex_init(x, attr) pthread_mutex_init(x, attr)
     #define lk_compat_mutex_destroy(x) pthread_mutex_destroy(x)
     #define lk_compat_mutex_lock(x) pthread_mutex_lock(x)
     #define lk_compat_mutex_unlock(x) pthread_mutex_unlock(x)
@@ -32,6 +33,7 @@
     #define lk_compat_condition_destroy(cond) pthread_cond_destroy(cond)
     #define lk_compat_condition_wait(cond, mutex) pthread_cond_wait(cond, mutex)
     #define lk_compat_condition_signal(cond) pthread_cond_signal(cond)
+    #define lk_compat_condition_broadcast(cond) pthread_cond_broadcast(cond)
 
     #ifdef BUILDING_LK
         #define LK_PUBLIC __attribute__((visibility("default")))
@@ -61,6 +63,8 @@
 
 void LK_PUBLIC lk_set_log_file(FILE* file);
 LK_PUBLIC FILE* lk_get_log_file();
+void LK_PUBLIC lk_lock_log_file_mutex();
+void LK_PUBLIC lk_unlock_log_file_mutex();
 
 #include <assert.h>
 #define LK_ASSERT(x) assert(x)
@@ -70,14 +74,16 @@ LK_PUBLIC FILE* lk_get_log_file();
         assert(false);                      \
     } while (false)
 #define LK_ASSERT_NOT_NULL(x) assert((x) != NULL)
-#define lk_log(...)                                        \
-    do {                                                   \
-        FILE* _lk_logfile = lk_get_log_file();             \
-        if (_lk_logfile) {                                 \
+#define lk_log(...)                                      \
+    do {                                                 \
+        FILE* _lk_logfile = lk_get_log_file();           \
+        if (_lk_logfile) {                               \
+            lk_lock_log_file_mutex();                    \
             fprintf(_lk_logfile, "[LK] %s: ", __func__); \
-            fprintf(_lk_logfile, __VA_ARGS__);             \
-            fputs("\n", _lk_logfile);                      \
-        }                                                  \
+            fprintf(_lk_logfile, __VA_ARGS__);           \
+            fputs("\n", _lk_logfile);                    \
+            lk_unlock_log_file_mutex();                  \
+        }                                                \
     } while (false)
 
 #include <string.h>

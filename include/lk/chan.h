@@ -37,6 +37,8 @@ typedef struct {
     size_t _read_ptr;
     size_t _write_ptr;
     atomic_size_t _signals;
+    lk_compat_condition_type _free_cond_var;
+    atomic_size_t _free_signals;
 } LKChannel;
 
 // initializes the channel with a queue size of 1; allocates
@@ -51,7 +53,7 @@ void LK_PUBLIC lk_chan_destroy(LKChannel*);
 void LK_PUBLIC lk_chan_push(LKChannel*, void* data);
 // blocks until a value arrives in the channel, gives it back once it has, and
 // removes it from the channel. will NEVER return NULL.
-LKChanValue LK_PUBLIC lk_chan_pop(LKChannel*);
+LK_PUBLIC void* lk_chan_pop(LKChannel*);
 
 // statics
 
