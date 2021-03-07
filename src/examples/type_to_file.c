@@ -19,6 +19,7 @@ void* write_to_file(LKChannel* chan) {
 int main() {
     LKThread thread;
     LKChannel chars;
+    puts("Anything you type gets written to 'outfile.txt' at the same time!\nType '!' to exit");
     lk_input_init();
     lk_chan_init(&chars);
     lk_thread_create(&thread, (LKThreadFunction)write_to_file, &chars);

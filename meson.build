@@ -31,7 +31,13 @@ test_exe = executable('test_lk', 'src/test.c',
 )
 
 sandbox_exe = executable('sandbox', 'src/sandbox.c',
-  include_directories : [srcdir, include_directories('acutest/include')],
+  include_directories : [srcdir],
+  link_with : liblk,
+  dependencies : thread_dep,
+)
+
+example_type_to_file_exe = executable('type_to_file', 'src/examples/type_to_file.c',
+  include_directories : [srcdir],
   link_with : liblk,
   dependencies : thread_dep,
 )
