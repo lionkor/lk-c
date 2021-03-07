@@ -10,6 +10,8 @@
 #if defined _WIN32 || defined __CYGWIN__
 #define LK_WIN
     #error "implementation for this platform is incomplete"
+    
+    #include <windows.h>
 
     #ifdef BUILDING_LK
         #define LK_PUBLIC __declspec(dllexport)

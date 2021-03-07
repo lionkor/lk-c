@@ -28,5 +28,6 @@
 #include "common.h"
 
 #include "chan.h"
+#include "input.h"
 #include "refptr.h"
 #include "thread.h"
