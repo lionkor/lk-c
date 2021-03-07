@@ -14,7 +14,9 @@
 // UNIX - assume GNU + POSIX
 #else
 #define LK_POSIX
-    #define _GNU_SOURCE
+    #ifndef _GNU_SOURCE
+        #define _GNU_SOURCE
+    #endif // _GNU_SOURCE
     #include <pthread.h>
     #define lk_compat_mutex_type pthread_mutex_t
     #define lk_compat_mutex_init(x, attr) pthread_mutex_init(x, attr)
@@ -34,6 +36,7 @@
     #define lk_compat_condition_wait(cond, mutex) pthread_cond_wait(cond, mutex)
     #define lk_compat_condition_signal(cond) pthread_cond_signal(cond)
     #define lk_compat_condition_broadcast(cond) pthread_cond_broadcast(cond)
+    #define NORETURN __attribute__ ((__noreturn__))
 
     #ifdef BUILDING_LK
         #define LK_PUBLIC __attribute__((visibility("default")))
