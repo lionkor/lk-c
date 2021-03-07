@@ -4,6 +4,9 @@
 static char getchar_no_echo() {
     return _getch();
 }
+static char getchar_echo() {
+    return _getche();
+}
 #else
 #include <termio.h>
 // for linux, we take care of non-echoing and non-buffered input with termios
@@ -36,6 +39,10 @@ static char getch_(bool echo) {
 static char getchar_no_echo() {
     return getch_(false);
 }
+
+static char getchar_echo() {
+    return getch_(true);
+}
 #endif
 
 // input library needs to be initialized before use
@@ -55,4 +62,9 @@ void lk_input_init() {
 char lk_unbuffered_getchar_no_echo() {
     LK_ASSERT(initialized);
     return getchar_no_echo();
+}
+
+char lk_unbuffered_getchar() {
+    LK_ASSERT(initialized);
+    return getchar_echo();
 }

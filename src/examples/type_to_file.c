@@ -9,8 +9,6 @@ void* write_to_file(LKChannel* chan) {
         }
         fwrite((char*)&c, 1, 1, file);
         fflush(file);
-        putchar(c);
-        fflush(stdout);
     }
     fclose(file);
     return NULL;
@@ -29,6 +27,8 @@ int main() {
         if (c == '!') {
             break;
         }
+        putchar(c);
+        fflush(stdout);
     }
     lk_thread_join(&thread, NULL);
     lk_chan_destroy(&chars);
