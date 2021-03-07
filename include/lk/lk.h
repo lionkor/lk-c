@@ -3,6 +3,11 @@
 /*
  * Includes all lk library headers.
  * 
+ * IMPORTANT: Do *NEVER* use any struct fields starting with _ (underscore) 
+ *            directly. This will cause undefined behavior. Fields without a 
+ *            underscore prefix may be read or written at any point unless 
+ *            documentation says otherwise.
+ * 
  * Possible configurations:
  * 
  * - Allocators
@@ -11,11 +16,9 @@
  *       #define lk_malloc my_custom_malloc
  *       #define lk_calloc my_custom_calloc
  *       #define lk_free my_custom_free
- *    If they're not defined by the user, <stdlib.h>'s malloc, calloc and free 
- *    are used. If your custom allocator only supplies malloc and free, calloc may
- *    simply be defined as:
- *       #define lk_calloc(x, y) my_custom_malloc((x) * (y)) 
- *    (note the parentheses). Note that you should always define all three, as undefined
+ *       #define lk_realloc my_custom_realloc
+ *    If they're not defined by the user, <stdlib.h>'s malloc, calloc, etc. are
+ *    used. Note that you should always define all of them, as undefined
  *    ones will still use the default stdlib version.
  */
 

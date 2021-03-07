@@ -50,10 +50,7 @@
     #endif
 #endif
 
-#if !defined(lk_malloc) && !defined(lk_free) && !defined(lk_calloc)
-    #include <stdlib.h>
-#endif
-
+#include <stdlib.h>
 #ifndef lk_malloc
     #define lk_malloc malloc
 #endif // lk_malloc
@@ -65,6 +62,10 @@
 #ifndef lk_calloc
     #define lk_calloc calloc
 #endif // lk_calloc
+
+#ifndef lk_realloc
+    #define lk_realloc realloc
+#endif // lk_realloc
 
 #include <stdio.h>
 // clang-format on
@@ -98,3 +99,6 @@ void LK_PUBLIC lk_unlock_log_file_mutex();
 #include <errno.h>
 #define lk_log_perror(context) \
     lk_log("%s error: %s", context, strerror(errno))
+
+#include <stdbool.h>
+#include <stdatomic.h>
