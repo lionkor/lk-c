@@ -1,15 +1,31 @@
 #include <lk.h>
 
+void* write_to_file(LKChannel* chan) {
+    FILE* file = fopen("outfile.txt", "w");
+    while (true) {
+        long c = (long)lk_chan_pop(chan);
+        if (c == '!') {
+            break;
+        }
+        fwrite((char*)&c, 1, 1, file);
+        fflush(file);
+    }
+    fclose(file);
+    return NULL;
+}
+
 int main() {
-    lk_set_log_file(stdout);
-    lk_log("started");
-    LKRefPtr ptr;
-    lk_refptr_init(&ptr, sizeof(int));
-    *lk_refptr_as(&ptr, int*) = 5;
-    lk_log("data is 0x%x / %d", *lk_refptr_as(&ptr, int*), *lk_refptr_as(&ptr, int*));
-    *lk_refptr_as(&ptr, int*) = 10;
-    lk_log("data is 0x%x / %d", *lk_refptr_as(&ptr, int*), *lk_refptr_as(&ptr, int*));
-    lk_log("expired? %s", lk_refptr_expired(&ptr) ? "true" : "false");
-    lk_refptr_deref(&ptr);
-    lk_log("expired? %s", lk_refptr_expired(&ptr) ? "true" : "false");
+    LKThread thread;
+    LKChannel chars;
+    lk_chan_init(&chars);
+    lk_thread_create(&thread, (LKThreadFunction)write_to_file, &chars);
+    while (true) {
+        long c = getchar();
+        lk_chan_push(&chars, (void*)c);
+        if (c == '!') {
+            break;
+        }
+    }
+    lk_thread_join(&thread, NULL);
+    lk_chan_destroy(&chars);
 }
