@@ -1,6 +1,11 @@
 #pragma once
-// clang-format off
 
+/*
+ * A common set of macros, values, functions and includes shared by all lk
+ * headers. You should never need to include this as a user of the library.
+ */
+
+// clang-format off
 // WINDOWS
 #if defined _WIN32 || defined __CYGWIN__
 #define LK_WIN
