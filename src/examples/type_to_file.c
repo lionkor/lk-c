@@ -24,7 +24,7 @@ int main() {
     lk_chan_init(&chars);
     lk_thread_create(&thread, (LKThreadFunction)write_to_file, &chars);
     while (true) {
-        long c = lk_getchar_no_echo();
+        long c = lk_unbuffered_getchar_no_echo();
         lk_chan_push(&chars, (void*)c);
         if (c == '!') {
             break;

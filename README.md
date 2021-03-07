@@ -4,8 +4,8 @@
 
 - C17
 - No 3rd party dependencies
-- Threading
-    - Channels inspired by Go(-lang)'s `chan`
-    - Cross-platform threads with some synchronisation builtin
+- Channel library inspired by Go(-lang)'s `chan`
+- Cross-platform threads library with some synchronisation builtin
+- Input library with features like non-buffering getchar
 - MIT license
 - Meson build system

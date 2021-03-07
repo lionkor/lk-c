@@ -52,7 +52,7 @@ void lk_input_init() {
     initialized = true;
 }
 
-char lk_getchar_no_echo() {
+char lk_unbuffered_getchar_no_echo() {
     LK_ASSERT(initialized);
     return getchar_no_echo();
 }
