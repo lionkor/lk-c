@@ -43,7 +43,8 @@
     #define lk_compat_condition_wait(cond, mutex) pthread_cond_wait(cond, mutex)
     #define lk_compat_condition_signal(cond) pthread_cond_signal(cond)
     #define lk_compat_condition_broadcast(cond) pthread_cond_broadcast(cond)
-    #define NORETURN __attribute__ ((__noreturn__))
+    #define LK_NORETURN __attribute__ ((__noreturn__))
+    #define LK_NODISCARD __attribute__ ((warn_unused_result))
 
     #ifdef BUILDING_LK
         #define LK_PUBLIC __attribute__((visibility("default")))
