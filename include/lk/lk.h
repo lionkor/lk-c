@@ -31,3 +31,4 @@
 #include "input.h"
 #include "refptr.h"
 #include "thread.h"
+#include "memory.h"

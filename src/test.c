@@ -53,10 +53,67 @@ void t_thread_create_join() {
     TEST_CHECK(retval == &n);
 }
 
+void t_memory_alloc_dealloc() {
+    void* mem = lk_allocate(1);
+    TEST_ASSERT(mem != NULL);
+    lk_deallocate(&mem);
+    TEST_CHECK(mem == NULL);
+}
+
+void t_memory_copy() {
+    const size_t n = 64;
+    void* mem = lk_allocate(n);
+    TEST_ASSERT(mem != NULL);
+
+    lk_memory_zero(mem, n);
+    const u8* p = mem;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == 0);
+    }
+
+    lk_memory_fill(mem, n, (u8)1);
+    p = mem;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == (u8)1);
+    }
+
+    lk_memory_fill(mem, n, (u8)-253);
+    p = mem;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == (u8)-253);
+    }
+
+    void* mem2 = lk_allocate(n);
+    lk_memory_zero(mem2, n);
+    lk_memory_copy(mem2, mem, n);
+    p = mem;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == (u8)-253);
+    }
+    p = mem2;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == (u8)-253);
+    }
+
+    lk_memory_fill(mem, n, 123);
+    lk_memory_move(mem2, mem, n);
+
+    p = mem2;
+    for (size_t i = 0; i < n; ++i) {
+        TEST_CHECK(p[i] == (u8)-253);
+    }
+
+    lk_deallocate(&mem);
+    lk_deallocate(&mem2);
+    TEST_CHECK(mem == NULL);
+    TEST_CHECK(mem2 == NULL);
+}
+
 TEST_LIST = {
     { "chan - init, destroy", t_chan_init_destroy },
     { "chan - init, destroy bad", t_chan_init_destroy_bad },
     { "chan - push", t_chan_push },
     { "thread - create, join", t_thread_create_join },
+    { "memory - allocate, deallocate", t_memory_alloc_dealloc },
     { NULL, NULL } /* zeroed record marking the end of the list */
 };

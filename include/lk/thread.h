@@ -32,5 +32,5 @@ typedef struct {
 bool LK_PUBLIC lk_thread_create(LKThread*, LKThreadFunction fn, void* restrict args);
 // waits for the thread to terminate
 bool LK_PUBLIC lk_thread_join(LKThread*, void** return_value);
-void LK_PUBLIC NORETURN lk_thread_exit(void* value);
+void LK_PUBLIC LK_NORETURN lk_thread_exit(void* value);
 bool LK_PUBLIC lk_thread_detach(LKThread*);

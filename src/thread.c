@@ -42,7 +42,7 @@ bool lk_thread_create(LKThread* thread, LKThreadFunction fn, void* restrict args
     thread->id = -1;
     int ret = lk_compat_thread_create(&thread->_thread, internal_start_thread, &internal_args);
     if (ret != 0) {
-        lk_log_perror("thread_create");
+        lk_log_error("thread_create");
         return false;
     }
     // blocks until the thread reports that it started

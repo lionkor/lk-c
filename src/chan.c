@@ -1,5 +1,7 @@
 #include "chan.h"
 
+#include "memory.h"
+
 #include <errno.h>
 #include <string.h>
 
@@ -13,9 +15,9 @@ bool lk_chan_init_with_size(LKChannel* channel, size_t size) {
         lk_log("size needs to be > 0");
         return false;
     }
-    channel->_data = lk_calloc(size, sizeof(LKChanValue));
+    channel->_data = lk_allocate_array(size, sizeof(LKChanValue));
     if (channel->_data == NULL) {
-        lk_log_perror("lk_calloc");
+        lk_log_error("lk_calloc");
         return false;
     }
     channel->_size = size;
@@ -31,15 +33,15 @@ bool lk_chan_init_with_size(LKChannel* channel, size_t size) {
 
     ret = pthread_mutexattr_init(&attr);
     if (ret != 0) {
-        lk_log_perror("mutexattr_init");
+        lk_log_error("mutexattr_init");
     }
     ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     if (ret != 0) {
-        lk_log_perror("mutexattr_settype");
+        lk_log_error("mutexattr_settype");
     }
     ret = pthread_mutex_init(&channel->_mutex, &attr);
     if (ret != 0) {
-        lk_log_perror("mutex_init");
+        lk_log_error("mutex_init");
     }
 #endif
     lk_compat_condition_init(&channel->_cond_var);
@@ -62,23 +64,23 @@ void* lk_chan_pop(LKChannel* channel) {
     LK_ASSERT_NOT_NULL(channel);
     int ret = lk_compat_mutex_lock(&channel->_mutex);
     if (ret != 0) {
-        lk_log_perror("mutex_lock");
+        lk_log_error("mutex_lock");
     }
     while (channel->_count == 0) {
         ret = lk_compat_condition_wait(&channel->_cond_var, &channel->_mutex);
         if (ret != 0) {
-            lk_log_perror("condition_wait");
+            lk_log_error("condition_wait");
         }
         lk_log("waiting");
     }
     LKChanValue value = chan_pop_internal(channel);
     ret = lk_compat_condition_signal(&channel->_free_cond_var);
     if (ret != 0) {
-        lk_log_perror("condition_signal");
+        lk_log_error("condition_signal");
     }
     ret = lk_compat_mutex_unlock(&channel->_mutex);
     if (ret != 0) {
-        lk_log_perror("mutex_unlock");
+        lk_log_error("mutex_unlock");
     }
     return value.data;
 }
@@ -87,12 +89,12 @@ void lk_chan_push(LKChannel* channel, void* data) {
     LK_ASSERT_NOT_NULL(channel);
     int ret = lk_compat_mutex_lock(&channel->_mutex);
     if (ret != 0) {
-        lk_log_perror("mutex_lock");
+        lk_log_error("mutex_lock");
     }
     while (channel->_count >= channel->_size) {
         ret = lk_compat_condition_wait(&channel->_free_cond_var, &channel->_mutex);
         if (ret != 0) {
-            lk_log_perror("condition_wait");
+            lk_log_error("condition_wait");
         }
     }
     channel->_data[channel->_write_ptr].data = data;
@@ -100,18 +102,18 @@ void lk_chan_push(LKChannel* channel, void* data) {
     channel->_count += 1;
     ret = lk_compat_condition_signal(&channel->_cond_var);
     if (ret != 0) {
-        lk_log_perror("condition_signal");
+        lk_log_error("condition_signal");
     }
     ret = lk_compat_mutex_unlock(&channel->_mutex);
     if (ret != 0) {
-        lk_log_perror("mutex_unlock");
+        lk_log_error("mutex_unlock");
     }
 }
 
 void lk_chan_destroy(LKChannel* channel) {
     if (channel) {
         lk_compat_mutex_lock(&channel->_mutex);
-        free(channel->_data);
+        lk_deallocate((void**)&channel->_data);
         lk_compat_mutex_unlock(&channel->_mutex);
         lk_compat_mutex_destroy(&channel->_mutex);
         lk_compat_condition_destroy(&channel->_cond_var);

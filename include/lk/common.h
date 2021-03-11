@@ -5,6 +5,13 @@
  * headers. You should never need to include this as a user of the library.
  */
 
+#include <stdint.h>
+
+// check for 64 bit integer types, define if exists
+#ifdef UINT64_MAX
+#define LK_64_BIT
+#endif
+
 // clang-format off
 // WINDOWS
 #if defined _WIN32 || defined __CYGWIN__
@@ -24,6 +31,7 @@
     #ifndef _GNU_SOURCE
         #define _GNU_SOURCE
     #endif // _GNU_SOURCE
+    #define __STDC_WANT_LIB_EXT1__ 1
     #include <pthread.h>
     #define lk_compat_mutex_type pthread_mutex_t
     #define lk_compat_mutex_init(x, attr) pthread_mutex_init(x, attr)
@@ -73,9 +81,14 @@
 #include <stdio.h>
 // clang-format on
 
+// set to `stdout` to print to stdout, or a logfile FILE* to log to a
+// file, or to NULL to turn off logging.
 void LK_PUBLIC lk_set_log_file(FILE* file);
 LK_PUBLIC FILE* lk_get_log_file();
+
+// don't use
 void LK_PUBLIC lk_lock_log_file_mutex();
+// don't use
 void LK_PUBLIC lk_unlock_log_file_mutex();
 
 #include <assert.h>
@@ -100,7 +113,21 @@ void LK_PUBLIC lk_unlock_log_file_mutex();
 
 #include <string.h>
 #include <errno.h>
-#define lk_log_perror(context) \
+#define lk_log_error(context) \
     lk_log("%s error: %s", context, strerror(errno))
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+#ifdef LK_64_BIT
+typedef uint64_t u64;
+#endif // LK_64_BIT
+
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+#ifdef LK_64_BIT
+typedef int64_t i64;
+#endif // LK_64_BIT
 
 #include <stdbool.h>

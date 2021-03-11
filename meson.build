@@ -4,7 +4,7 @@ project('lk', 'c',
 
 # These arguments are only used to build the shared library
 # not the executables that use the library.
-liblk_args = ['-DBUILDING_LK', '-D_GNU_SOURCE']
+liblk_args = ['-DBUILDING_LK', '-D_GNU_SOURCE', '-D__STDC_LIB_EXT1__=1']
 
 thread_dep = dependency('threads')
 srcdir = include_directories('include/lk')
