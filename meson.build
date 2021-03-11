@@ -1,6 +1,6 @@
 project('lk', 'c',
   version : '0.1',
-  default_options : ['warning_level=3', 'c_std=c17'])
+  default_options : ['warning_level=3', 'c_std=c11'])
 
 # These arguments are only used to build the shared library
 # not the executables that use the library.
@@ -16,6 +16,7 @@ liblk = shared_library('lk',
     'src/chan.c',
     'src/refptr.c',
     'src/input.c',
+    'src/memory.c',
   ],
   include_directories : srcdir,
   install : true,
