@@ -18,7 +18,6 @@
  * This is inspired by Go's `chan` channels.
  */
 
-#include <stdatomic.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -33,12 +32,10 @@ typedef struct {
     size_t _size;
     lk_compat_mutex_type _mutex;
     lk_compat_condition_type _cond_var;
+    lk_compat_condition_type _free_cond_var;
     size_t _count;
     size_t _read_ptr;
     size_t _write_ptr;
-    atomic_size_t _signals;
-    lk_compat_condition_type _free_cond_var;
-    atomic_size_t _free_signals;
 } LKChannel;
 
 // initializes the channel with a queue size of 1; allocates

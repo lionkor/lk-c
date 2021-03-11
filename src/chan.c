@@ -43,9 +43,7 @@ bool lk_chan_init_with_size(LKChannel* channel, size_t size) {
     }
 #endif
     lk_compat_condition_init(&channel->_cond_var);
-    atomic_store(&channel->_signals, 0);
     lk_compat_condition_init(&channel->_free_cond_var);
-    atomic_store(&channel->_free_signals, size);
     return true;
 }
 
@@ -66,20 +64,14 @@ void* lk_chan_pop(LKChannel* channel) {
     if (ret != 0) {
         lk_log_perror("mutex_lock");
     }
-    if (atomic_load(&channel->_signals) == 0) {
-        do {
-            ret = lk_compat_condition_wait(&channel->_cond_var, &channel->_mutex);
-            if (ret != 0) {
-                lk_log_perror("condition_wait");
-            }
-            lk_log("waiting");
-        } while (channel->_count == 0);
-    } else {
-        lk_log("missed a signal, handling right away!");
+    while (channel->_count == 0) {
+        ret = lk_compat_condition_wait(&channel->_cond_var, &channel->_mutex);
+        if (ret != 0) {
+            lk_log_perror("condition_wait");
+        }
+        lk_log("waiting");
     }
-    atomic_fetch_sub(&channel->_signals, 1);
     LKChanValue value = chan_pop_internal(channel);
-    atomic_fetch_add(&channel->_free_signals, 1);
     ret = lk_compat_condition_signal(&channel->_free_cond_var);
     if (ret != 0) {
         lk_log_perror("condition_signal");
@@ -97,20 +89,15 @@ void lk_chan_push(LKChannel* channel, void* data) {
     if (ret != 0) {
         lk_log_perror("mutex_lock");
     }
-    if (atomic_load(&channel->_free_signals) == 0 || channel->_count >= channel->_size) {
-        do {
-            ret = lk_compat_condition_wait(&channel->_free_cond_var, &channel->_mutex);
-            if (ret != 0) {
-                lk_log_perror("condition_wait");
-            }
-        } while (channel->_count >= channel->_size);
-    } else {
-        lk_log("missed a signal, handling right away!");
+    while (channel->_count >= channel->_size) {
+        ret = lk_compat_condition_wait(&channel->_free_cond_var, &channel->_mutex);
+        if (ret != 0) {
+            lk_log_perror("condition_wait");
+        }
     }
     channel->_data[channel->_write_ptr].data = data;
     channel->_write_ptr = (channel->_write_ptr + 1) % channel->_size;
     channel->_count += 1;
-    atomic_fetch_add(&channel->_signals, 1);
     ret = lk_compat_condition_signal(&channel->_cond_var);
     if (ret != 0) {
         lk_log_perror("condition_signal");

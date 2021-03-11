@@ -33,23 +33,23 @@ void t_chan_push() {
     lk_thread_join(&thread, NULL);
 }
 
-atomic_int n = 0;
+_Atomic(int) n = 0;
 void* thread_create_join_thread(void* x) {
     (void)x;
-    atomic_fetch_add(&n, 1);
+    ++n;
     return &n;
 }
 
 void t_thread_create_join() {
     LKThread thread;
     n = 0;
-    TEST_CHECK(atomic_load(&n) == 0);
+    TEST_CHECK(n == 0);
     TEST_CHECK(lk_thread_create(&thread, thread_create_join_thread, NULL));
     TEST_CHECK(thread.id > 0);
     void* retval;
     TEST_CHECK(lk_thread_join(&thread, &retval));
-    TEST_CHECK(atomic_load(&n) == 1); // incremented in the thread
-    TEST_CHECK(atomic_load(((atomic_int*)retval)) == 1);
+    TEST_CHECK(n == 1); // incremented in the thread
+    TEST_CHECK(*((_Atomic(int)*)retval) == 1);
     TEST_CHECK(retval == &n);
 }
 

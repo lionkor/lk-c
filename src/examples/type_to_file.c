@@ -16,14 +16,14 @@ void* write_to_file(LKChannel* chan) {
 
 int main() {
     LKThread thread;
-    LKChannel chars;
+    LKChannel chan;
     puts("Anything you type gets written to 'outfile.txt' at the same time!\nType '!' to exit");
     lk_input_init();
-    lk_chan_init(&chars);
-    lk_thread_create(&thread, (LKThreadFunction)write_to_file, &chars);
+    lk_chan_init(&chan);
+    lk_thread_create(&thread, (LKThreadFunction)write_to_file, &chan);
     while (true) {
         long c = lk_unbuffered_getchar_no_echo();
-        lk_chan_push(&chars, (void*)c);
+        lk_chan_push(&chan, (void*)c);
         if (c == '!') {
             break;
         }
@@ -31,5 +31,5 @@ int main() {
         fflush(stdout);
     }
     lk_thread_join(&thread, NULL);
-    lk_chan_destroy(&chars);
+    lk_chan_destroy(&chan);
 }

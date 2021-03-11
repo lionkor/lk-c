@@ -103,4 +103,3 @@ void LK_PUBLIC lk_unlock_log_file_mutex();
     lk_log("%s error: %s", context, strerror(errno))
 
 #include <stdbool.h>
-#include <stdatomic.h>

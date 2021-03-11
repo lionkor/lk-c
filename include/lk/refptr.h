@@ -4,7 +4,7 @@
 
 typedef struct {
     void* _data;
-    atomic_size_t _refcount;
+    _Atomic(size_t) _refcount;
 } LKRefPtr;
 
 bool LK_PUBLIC lk_refptr_init(LKRefPtr*, size_t size);
