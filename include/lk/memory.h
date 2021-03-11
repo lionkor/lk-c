@@ -30,3 +30,7 @@ LK_PUBLIC void lk_memory_fill(void* start, size_t n, u8 with);
 // zeroes a range of memory.
 // arguments must not be 0 or NULL.
 #define lk_memory_zero(start, n) lk_memory_fill(start, n, 0)
+
+// compares a region of memory for equality.
+// arguments must not be 0 or NULL.
+LK_PUBLIC bool lk_memory_equal(const void* first, const void* second, size_t n);

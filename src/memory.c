@@ -43,3 +43,10 @@ void lk_memory_fill(void* start, size_t n, u8 with) {
     LK_ASSERT(n != 0);
     memset(start, with, n);
 }
+
+bool lk_memory_equal(const void* first, const void* second, size_t n) {
+    LK_ASSERT_NOT_NULL(first);
+    LK_ASSERT_NOT_NULL(second);
+    LK_ASSERT(n != 0);
+    return memcmp(first, second, n) == 0;
+}

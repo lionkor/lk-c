@@ -131,3 +131,47 @@ typedef int64_t i64;
 #endif // LK_64_BIT
 
 #include <stdbool.h>
+#include <stdarg.h>
+
+#define LK_BANNED(func) _##func##_is_banned
+
+#undef strcpy
+#define strcpy(x, y) LK_BANNED(strcpy)
+#undef strcat
+#define strcat(x, y) LK_BANNED(strcat)
+#undef strncpy
+#define strncpy(x, y, n) LK_BANNED(strncpy)
+#undef strncat
+#define strncat(x, y, n) LK_BANNED(strncat)
+#undef strdup
+#define strdup(x) LK_BANNED(strdup)
+#undef strndup
+#define strndup(x) LK_BANNED(strndup)
+#undef scanf
+#define scanf(x, ...) LK_BANNED(scanf)
+#undef fscanf
+#define fscanf(x, ...) LK_BANNED(fscanf)
+#undef sscanfs
+#define sscanf(x, ...) LK_BANNED(sscanf)
+#undef sprintf
+#define sprintf(...) LK_BANNED(sprintf)
+#undef vsprintf
+#define vsprintf(...) LK_BANNED(vsprintf)
+#undef vscanf
+#define vscanf(str, ap) LK_BANNED(vscanf)
+#undef vsscanf
+#define vsscanf(str, format, ap) LK_BANNED(vsscanf)
+#undef vfscanf
+#define sfscanf(str, format, ap) LK_BANNED(vfscanf)
+#undef gmtime
+#define gmtime(t) LK_BANNED(gmtime)
+#undef localtime
+#define localtime(t) LK_BANNED(localtime)
+#undef ctime
+#define ctime(t) LK_BANNED(ctime)
+#undef ctime_r
+#define ctime_r(t, buf) LK_BANNED(ctime_r)
+#undef asctime
+#define asctime(t) LK_BANNED(asctime)
+#undef asctime_r
+#define asctime_r(t, buf) LK_BANNED(asctime_r)
