@@ -29,6 +29,7 @@
 
 #include "chan.h"
 #include "input.h"
-#include "refptr.h"
-#include "thread.h"
 #include "memory.h"
+#include "refptr.h"
+#include "string.h"
+#include "thread.h"
