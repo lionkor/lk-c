@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "lk/memory.h"
 
 void* lk_allocate(size_t n_bytes) {
     LK_ASSERT(n_bytes != 0);

@@ -1,6 +1,6 @@
-#include "chan.h"
+#include "lk/chan.h"
 
-#include "memory.h"
+#include "lk/memory.h"
 
 #include <errno.h>
 #include <string.h>

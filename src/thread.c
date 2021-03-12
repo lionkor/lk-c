@@ -1,4 +1,4 @@
-#include "thread.h"
+#include "lk/thread.h"
 
 #if defined(LK_POSIX)
 #include <syscall.h>

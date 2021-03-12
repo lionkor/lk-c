@@ -1,4 +1,4 @@
-#include <lk.h>
+#include <lk/lk.h>
 
 void* write_to_file(LKChannel* chan) {
     FILE* file = fopen("outfile.txt", "w");

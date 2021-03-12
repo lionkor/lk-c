@@ -1,5 +1,5 @@
 #include <acutest.h>
-#include <lk.h>
+#include <lk/lk.h>
 
 void t_chan_init_destroy() {
     LKChannel chan;

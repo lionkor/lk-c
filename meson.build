@@ -7,7 +7,7 @@ project('lk', 'c',
 liblk_args = ['-DBUILDING_LK', '-D_GNU_SOURCE', '-D__STDC_LIB_EXT1__=1']
 
 thread_dep = dependency('threads')
-srcdir = include_directories('include/lk')
+srcdir = include_directories('include')
 
 liblk = shared_library('lk', 
   [

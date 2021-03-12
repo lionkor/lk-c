@@ -1,4 +1,4 @@
-#include "input.h"
+#include "lk/input.h"
 
 #if defined(LK_WIN)
 static char getchar_no_echo() {
