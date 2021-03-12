@@ -27,6 +27,7 @@
 
 #include "common.h"
 
+#include "buffer.h"
 #include "chan.h"
 #include "input.h"
 #include "memory.h"

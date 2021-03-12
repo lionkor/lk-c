@@ -4,7 +4,7 @@ project('lk', 'c',
 
 # These arguments are only used to build the shared library
 # not the executables that use the library.
-liblk_args = ['-DBUILDING_LK', '-D_GNU_SOURCE', '-D__STDC_LIB_EXT1__=1']
+liblk_args = ['-DBUILDING_LK', '-D_GNU_SOURCE']
 
 thread_dep = dependency('threads')
 srcdir = include_directories('include')
@@ -18,6 +18,7 @@ liblk = shared_library('lk',
     'src/input.c',
     'src/memory.c',
     'src/string.c',
+    'src/buffer.c',
   ],
   include_directories : srcdir,
   install : true,
@@ -54,9 +55,15 @@ lk_dep = declare_dependency(
 # Make this library usable from the system's
 # package manager.
 install_headers([
-  'include/lk/lk.h',
-  'include/lk/chan.h',
-  'include/lk/thread.h',
+    'include/lk/buffer.h',
+    'include/lk/chan.h',
+    'include/lk/common.h',
+    'include/lk/input.h',
+    'include/lk/lk.h',
+    'include/lk/memory.h',
+    'include/lk/refptr.h',
+    'include/lk/string.h',
+    'include/lk/thread.h',
 ])
 
 pkg_mod = import('pkgconfig')

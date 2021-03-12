@@ -48,7 +48,14 @@ bool lk_memory_equal(const void* first, const void* second, size_t n) {
     LK_ASSERT_NOT_NULL(first);
     LK_ASSERT_NOT_NULL(second);
     LK_ASSERT(n != 0);
-    return memcmp(first, second, n) == 0;
+    const u8* b1 = first;
+    const u8* b2 = second;
+    for (size_t i = 0; i < n; ++i) {
+        if (b1[i] != b2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool lk_reallocate(void** memory, size_t new_size) {

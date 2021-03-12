@@ -109,11 +109,43 @@ void t_memory_copy() {
     TEST_CHECK(mem2 == NULL);
 }
 
+void t_buffer_alloc_dealloc() {
+    LKBuffer buf = lk_buffer_create(10);
+    lk_buffer_destroy(&buf);
+    TEST_CHECK(buf.data == NULL);
+    TEST_CHECK(buf.size == 0);
+}
+
+static bool is_X(u8 c) {
+    return c == 'X';
+}
+
+void t_buffer_find() {
+    lk_set_log_file(stdout);
+    LKBuffer buf = lk_buffer_create(10);
+    TEST_CHECK(lk_buffer_find(&buf, 1) == SIZE_MAX);
+    TEST_CHECK(lk_buffer_find(&buf, 0) == 0);
+    buf.data[2] = 'a';
+    buf.data[3] = 'a';
+    buf.data[4] = 'X';
+    TEST_CHECK(lk_buffer_find(&buf, 'a') == 2);
+    TEST_CHECK(lk_buffer_find_if(&buf, is_X) == 4);
+    u8 tofind[] = { 'a', 'X' };
+    TEST_CHECK(lk_buffer_search(&buf, tofind, 2) == 3);
+    lk_buffer_zero(&buf);
+    TEST_CHECK(lk_buffer_search(&buf, tofind, 2) == SIZE_MAX);
+    lk_buffer_destroy(&buf);
+    TEST_CHECK(buf.data == NULL);
+    TEST_CHECK(buf.size == 0);
+}
+
 TEST_LIST = {
     { "chan - init, destroy", t_chan_init_destroy },
     { "chan - init, destroy bad", t_chan_init_destroy_bad },
     { "chan - push", t_chan_push },
     { "thread - create, join", t_thread_create_join },
     { "memory - allocate, deallocate", t_memory_alloc_dealloc },
+    { "buffer - allocate, deallocate", t_buffer_alloc_dealloc },
+    { "buffer - find", t_buffer_find },
     { NULL, NULL } /* zeroed record marking the end of the list */
 };
