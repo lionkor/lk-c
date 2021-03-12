@@ -11,7 +11,13 @@ LK_NODISCARD LK_PUBLIC void* lk_allocate(size_t n_bytes);
 LK_NODISCARD LK_PUBLIC void* lk_allocate_array(size_t count, size_t element_size);
 // frees & zeroes pointer.
 // argument may not be NULL.
-LK_PUBLIC LK_PUBLIC void lk_deallocate(void** mem);
+LK_PUBLIC void lk_deallocate(void** mem);
+// moves the memory to a region with new_size, may or may not actually move.
+// it might only enlarge the currently allocated memory.
+// may fail, so return value must be checked. if it fails, the original memory remains
+// unmodified.
+// arguments may not be 0 or NULL, the memory pointed to by memory may be NULL.
+LK_PUBLIC LK_NODISCARD bool lk_reallocate(void** memory, size_t new_size);
 
 // basic memory operations
 

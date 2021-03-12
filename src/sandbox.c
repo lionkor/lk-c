@@ -2,10 +2,8 @@
 
 int main() {
     lk_set_log_file(stdout);
-    LKString str1 = lk_string_create("Hello, World!\n");
-    LKString str2 = lk_string_create("Goodbye, World!\n");
-    LK_ASSERT(lk_string_writeto(&str1, stdout));
-    LK_ASSERT(lk_string_writeto(&str2, stdout));
-    lk_string_destroy(&str1);
-    lk_string_destroy(&str2);
+    LKBuffer buf = { NULL, 50 };
+    buf.data = lk_allocate(buf.size);
+    LK_ASSERT(lk_reallocate(&buf.data, 70));
+    lk_deallocate(&buf.data);
 }

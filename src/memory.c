@@ -50,3 +50,16 @@ bool lk_memory_equal(const void* first, const void* second, size_t n) {
     LK_ASSERT(n != 0);
     return memcmp(first, second, n) == 0;
 }
+
+bool lk_reallocate(void** memory, size_t new_size) {
+    LK_ASSERT_NOT_NULL(memory);
+    LK_ASSERT(new_size != 0);
+    // *memory may be NULL
+    void* ret = lk_realloc(*memory, new_size);
+    if (!ret) {
+        lk_log_error("realloc");
+        return false;
+    }
+    *memory = ret;
+    return true;
+}
